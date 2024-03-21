@@ -136,7 +136,6 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     source.elements.append(composition)
 
 output = json.loads(video.toJSON())
-print(output)
 response = requests.post(
  'https://api.creatomate.com/v1/renders',
  headers={
@@ -147,7 +146,7 @@ response = requests.post(
 )
 
 if response.status_code >= 200 & response.status_code<300:  # Código 200 indica éxito
-    print("La solicitud fue exitosa.")
+    print("La solicitud a createToMate fue exitosa con el codido: ",response.status_code)
     print("Respuesta:", response.json())  # Imprimir la respuesta JSON
 else:
     print("La solicitud falló con el código de estado:", response.status_code)
@@ -158,5 +157,3 @@ audio.eliminar_archivos_en_ruta(os.getcwd()+'/audio')
 #for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
 #    audio.eliminar_archivo_de_drive(audioDrive[index_pregunta])
 
-
-print("todo ok")

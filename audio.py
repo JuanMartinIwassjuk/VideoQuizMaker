@@ -29,6 +29,7 @@ def authenticate():
         # Guarda las credenciales para usarlas la próxima vez
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
+    print("Credenciales correctas, continuando con el script...")
     return creds
 def upload_file_to_google_drive(file_path, file_name):
     creds = authenticate()
@@ -66,7 +67,6 @@ def obtener_Url_Del_Archivo_De_Drive(Num_audio):
     file_name = '/audio'+str(Num_audio)+'.mp3'
     file_url = upload_file_to_google_drive(file_path, file_name)
     if file_url:
-        print("URL del archivo:", file_url)
         return file_url
     else:
         print("Error al subir archivo a Google Drive.")
@@ -106,7 +106,6 @@ def obtener_cantidad_archivos_en_carpeta(url_archivo):
     service = build('drive', 'v3', credentials=creds)
     # Parsear la URL del archivo para obtener su ID
     id_archivo = obtener_id_desde_url(url_archivo)
-    print(f"el id de archivo es {id_archivo}")
     # Obtener información del archivo
     archivo = service.files().get(fileId=id_archivo, fields='parents').execute()
     id_carpeta = archivo.get('parents')[0]
