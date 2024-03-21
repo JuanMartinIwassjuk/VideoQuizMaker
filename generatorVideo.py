@@ -78,14 +78,13 @@ comp_start_anim = Animation(
     start_angle="270°"
 )
 
-stroke_color = [{ "time": "0 s", "value": "#000000" }, { "time": "7.2 s", "value": "#000000" }, { "time": "7.5 s", "value": "#00ff00" }]
 source = Source('mp4', 1080, 1920, functions_videos.generar_tiempo_video(NUMBER_OF_QUESTIONS))
 background_music = Audio("Music", 18, "0 s", None, True, str(BACKGROUND_MUSIC), "5%", "2 s")
 source.elements.append(background_music)
 video = Video(source)
 
 #------------------------Pregunta Inicial
-composition = Composition("Question" + str(NUMBER_OF_QUESTIONS), 1,str(audio.obtener_duracion_mp3_en_segundos_sin_formato(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3")))+2)+' s' )
+composition = Composition("Question" + str(NUMBER_OF_QUESTIONS), 1,str(audio.obtener_duracion_mp3_en_segundos_sin_formato(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3")))+2.5)+' s' )
 inicial_text = Element("text", track=43, text=str(TEXTO_INICIAL), y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)")
 inicial_text.animations.append(text_start_anim)
 inicial_text.animations.append(text_end_anim)
@@ -94,7 +93,7 @@ inicial_text_to_speech = Audio("Audio" + str(NUMBER_OF_QUESTIONS), 3, "0 s", aud
 composition.elements.append(inicial_text_to_speech)
 #
 animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
-background_video = Image(type="video", source="05940918-3ab9-444e-b32f-1e39141f7282", track=1, time=0, duration=10, clip=True)
+background_video = Image(type="video", source=str(FONDO_INCIO), track=1, time=0, duration=10, clip=True)
 background_video.animations.append(animation)
 image = Image(str(FONDO_INCIO), 4, 10, True, [])
 image.animations.append(animation)
@@ -103,40 +102,43 @@ composition.elements.append(background_video)
 
 source.elements.append(composition)
 
+countdown_audio = 'https://drive.google.com/file/d/1bfo_R5sqar-7RqAG3SgVKAKvFkq06_IV/view?usp=drive_link'
 #------------------------
 
 
 for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
-    composition = Composition("Question" + str(index_pregunta), 1, "10 s")
+    composition = Composition("Question" + str(index_pregunta), 1, "12  s")
     first_track=10
-    question_text = Element("text", track=2, text=question["question"], y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)")
+    question_text = Element("text", track=2, text=question["question"], y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)",font_size="13 vmin",)
     question_text.animations.append(text_start_anim)
     question_text.animations.append(text_end_anim)
+    question_text.stroke_color = "#000000"
     composition.elements.append(question_text)
-    question_to_speech = Audio("Audio" + str(index_pregunta), first_track, "0 s", audio.obtener_duracion_mp3_en_segundos(os.path.abspath(os.path.join(os.getcwd(), 'audio', f"{index_pregunta}.mp3"))), True, audioDrive[index_pregunta], "100%", "0 s")
+    duracion_audio_pregunta = audio.obtener_duracion_mp3_en_segundos(os.path.abspath(os.path.join(os.getcwd(), 'audio', f"{index_pregunta}.mp3")))
+    question_to_speech = Audio("Audio" + str(index_pregunta), first_track, "0 s", duracion_audio_pregunta, True, audioDrive[index_pregunta], "100%", "0 s")
     composition.elements.append(question_to_speech)
 
     animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
-    background_video = Image(type="video", source="05940918-3ab9-444e-b32f-1e39141f7282", track=1, time=0, duration=10, clip=True)
+    background_video = Image(type="video", source=background_list_dict[index_pregunta], track=1, time=0, duration=12, clip=True)
     background_video.animations.append(animation)
     image = Image(background_list_dict[index_pregunta], 1, 10, True, [])
     image.animations.append(animation)
     composition.elements.append(image)
     composition.elements.append(background_video)
 
-    counter = Image("06311a89-c770-48e1-8a33-b5c1c417c787", 9, 5, True, [], y="7%", width="20%", height="12%", time=1.2)
+    counter = Image("06311a89-c770-48e1-8a33-b5c1c417c787", track=46,duration="5 s",clip=False,animations=[], y="7%", width="20%", height="12%", time=duracion_audio_pregunta)
     composition.elements.append(counter)
     second_track=first_track+10
-    countdown = Audio("countdown", second_track, "1.2 s", "4.8 s", True, "3b591fe7-e995-4e18-9353-f38c122cc3fb", "5%", "0 s")
+    countdown = Audio("countdown", second_track, duracion_audio_pregunta, "5 s", True, countdown_audio, "5%", "0 s")
     composition.elements.append(countdown)
     third_track=second_track+10
-    correct = Audio("correct", third_track, "7.2 s", "1.85 s", True, "530d3905-bd5b-4534-9532-f6657ed03296", "50%", "0 s")
+    correct = Audio("correct", third_track, audio.sumar_tiempos(duracion_audio_pregunta,"5 s"), "1.85 s", True, "530d3905-bd5b-4534-9532-f6657ed03296", "50%", "0 s")
     composition.elements.append(countdown)
     composition.elements.append(correct)
 
     if index_pregunta > 0:
         composition.animations.append(comp_start_anim)
-
+    stroke_color = [ {"time": "0 s", "value": "#000000"}, {"time": audio.sumar_tiempos(duracion_audio_pregunta, "4.8 s"), "value": "#000000"}, {"time": "12 s", "value": "#00ff00"} ]
     for index_opcion, option in enumerate(question["options"]):
         position_y = 52 + (10 * index_opcion)
         option_text = Element("text", track=index_opcion + 3, text=option, y=str(position_y) + "%", fill_color="#ffffff")
@@ -150,8 +152,10 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
         
         composition.elements.append(option_text)
 
+    j=0
     for i in range(5):
-        countdown_text_number = Element("text", track=12, text=str(5 - i), x="54.90%", y="9.5%", z_index=1, time=i + 1.2, duration="1 s", fill_color="#111111", font_size="12 vmin", font_weight="400")
+        countdown_text_number = Element("text", track=12, text=str(5 - i), x="54.90%", y="9.5%", z_index=1, time=audio.sumar_tiempos(duracion_audio_pregunta,(str(j)+' s')), duration="1 s", fill_color="#111111", font_size="12 vmin", font_weight="400")
+        j=j+1
         composition.elements.append(countdown_text_number)
 
     source.elements.append(composition)

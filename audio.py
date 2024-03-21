@@ -192,3 +192,24 @@ def obtener_duracion_mp3_en_segundos_desde_drive(url_drive):
     except Exception as e:
         print("Error al obtener la duración del archivo MP3 desde Google Drive:", e)
         return None
+        
+
+
+def sumar_tiempos(tiempo1, tiempo2):
+    try:
+        # Separar los tiempos en número y "s"
+        num1, _ = tiempo1.split()
+        num2, _ = tiempo2.split()
+
+        # Convertir los números a flotantes
+        num1 = float(num1)
+        num2 = float(num2)
+
+        # Sumar los tiempos en segundos
+        suma_segundos = num1 + num2
+
+        # Devolver la suma en el formato adecuado
+        return f"{suma_segundos} s"
+    except Exception as e:
+        print("Error al sumar los tiempos:", e)
+        return None

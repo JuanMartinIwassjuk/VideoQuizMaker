@@ -9,7 +9,8 @@ def generarArchivoDeljson(json):
 
 
 def generar_tiempo_video(cant_preguntas):
-    resultado = str((cant_preguntas * 10)+1.5+audio.obtener_duracion_mp3_en_segundos_sin_formato(os.path.abspath(os.path.join(os.getcwd(), 'audio', f"{str(NUMBER_OF_QUESTIONS)}.mp3")))) + ' s'
+    duracion_audio_inicio= str(audio.obtener_duracion_mp3_en_segundos_sin_formato(os.path.abspath(os.path.join(os.getcwd(), 'audio', f"{str(NUMBER_OF_QUESTIONS)}.mp3")))+2.5) + ' s'
+    resultado = audio.sumar_tiempos( (str(cant_preguntas * 12))+' s' ,duracion_audio_inicio)
     return resultado
 
 def encontrar_indice(lista, cadena):

@@ -72,7 +72,6 @@ class Element:
             self.duration = duration
             self.z_index = z_index
             self.font_size = font_size
-
 class Composition:
     def __init__(self, name, track, duration, elements=[]):
         self.name = name
