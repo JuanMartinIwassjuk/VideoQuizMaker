@@ -80,7 +80,7 @@ comp_start_anim = Animation(
 
 stroke_color = [{ "time": "0 s", "value": "#000000" }, { "time": "7.2 s", "value": "#000000" }, { "time": "7.5 s", "value": "#00ff00" }]
 source = Source('mp4', 1080, 1920, functions_videos.generar_tiempo_video(NUMBER_OF_QUESTIONS))
-background_music = Audio("Music", 18, "0 s", None, True, BACKGROUND_MUSIC, "5%", "2 s")
+background_music = Audio("Music", 18, "0 s", None, True, str(BACKGROUND_MUSIC), "5%", "2 s")
 source.elements.append(background_music)
 video = Video(source)
 
