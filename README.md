@@ -52,9 +52,9 @@ BACKGROUND_MUSIC='b5dc815e-dcc9-4c62-9405-f94913936bf5'
 El archivo para que funcione correctamente deberia quedar algo así:
 ![Los valores proporcionados para "API_KEY" y "autorizacion" son meramente ejemplos ilustrativos y no tienen la funcionalidad real de acceso.](https://github.com/JuanMartinIwassjuk/VideoQuizMaker/blob/main/ejemploConfig.png?raw=true)
 
-4. Obtener las credenciales en formato json que se obtienen configurando el proyecto en la Consola de Desarrolladores de Google y pegarlas en el archivo credentials.json
-
 Aclaracion: Los valores proporcionados para "API_KEY" y "AUTORIZACION" y las credenciales de google drive son meramente ejemplos ilustrativos y no tienen la funcionalidad real de acceso.
+
+4. Obtener las credenciales en formato json que se obtienen configurando el proyecto en la Consola de Desarrolladores de Google y pegarlas en el archivo credentials.json
 
 5. Una vez configurado todo el proyecto, ir a la carpeta fuente del mismo y correr en el bash el siguiente comando: python generatorVideo.py
 
