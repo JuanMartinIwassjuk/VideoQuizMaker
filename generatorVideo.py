@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 import generatorQuiz
 from creatomate import Animation, Image, Element, Composition, Source, Video, Audio
-from config import NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC,BACKGROUND_IMG,AUTORIZACION
+from config import NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC,BACKGROUND_IMG,AUTORIZACION,TEXTO_INICIAL,FONDO_INCIO,BACKGROUND_MUSIC
 
 
 #data = '{ "questions": [ { "question": "Who is known as The King in the NBA?", "options": [ "LeBron James", "Kobe Bryant", "Stephen Curry" ], "correct_answer": "LeBron James" }, { "question": "Which team has won the most NBA championships?", "options": [ "Boston Celtics", "Los Angeles Lakers", "Chicago Bulls" ], "correct_answer": "Boston Celtics" }, { "question": "Which player holds the record for the most points scored in a single NBA game?", "options": [ "Wilt Chamberlain", "Michael Jordan", "Kobe Bryant" ], "correct_answer": "Wilt Chamberlain" }, { "question": "Who is the NBAs all-time leader in assists?", "options": [ "John Stockton", "Magic Johnson", "Steve Nash" ], "correct_answer": "John Stockton" } ] }'
@@ -32,7 +32,8 @@ while True:  #Espera a que se suban todos los archivos de forma local
 for index_pregunta, question in enumerate(quiz_data_dict["questions"]):#Esto sube los audios desde local a drive
     urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(index_pregunta)+'.mp3', '/audio'+'/'+str(index_pregunta)+'.mp3')
     audioDrive.append(urlDrive)
-
+urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(NUMBER_OF_QUESTIONS)+'.mp3', '/audio'+'/'+str(NUMBER_OF_QUESTIONS)+'.mp3')#es el texto inicial
+audioDrive.append(urlDrive)
 
 
 while True:  #Espera a que se suban todos los archivos al Drive
@@ -78,11 +79,31 @@ comp_start_anim = Animation(
 )
 
 stroke_color = [{ "time": "0 s", "value": "#000000" }, { "time": "7.2 s", "value": "#000000" }, { "time": "7.5 s", "value": "#00ff00" }]
-
 source = Source('mp4', 1080, 1920, functions_videos.generar_tiempo_video(NUMBER_OF_QUESTIONS))
-background_music = Audio("Music", 18, "0 s", None, True, "b5dc815e-dcc9-4c62-9405-f94913936bf5", "5%", "2 s")
+background_music = Audio("Music", 18, "0 s", None, True, BACKGROUND_MUSIC, "5%", "2 s")
 source.elements.append(background_music)
 video = Video(source)
+
+#------------------------Pregunta Inicial
+composition = Composition("Question" + str(NUMBER_OF_QUESTIONS), 1,str(audio.obtener_duracion_mp3_en_segundos_sin_formato(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3")))+2)+' s' )
+inicial_text = Element("text", track=43, text=str(TEXTO_INICIAL), y="21.80%", fill_color="#000000", background_color="#ffffff")
+inicial_text.animations.append(text_start_anim)
+inicial_text.animations.append(text_end_anim)
+composition.elements.append(inicial_text)
+inicial_text_to_speech = Audio("Audio" + str(NUMBER_OF_QUESTIONS), 3, "0 s", audio.obtener_duracion_mp3_en_segundos(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3"))), True, audioDrive[NUMBER_OF_QUESTIONS], "100%", "0 s")
+composition.elements.append(inicial_text_to_speech)
+#
+animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
+background_video = Image(type="video", source="05940918-3ab9-444e-b32f-1e39141f7282", track=1, time=0, duration=10, clip=True)
+background_video.animations.append(animation)
+image = Image(str(FONDO_INCIO), 4, 10, True, [])
+image.animations.append(animation)
+composition.elements.append(image)
+composition.elements.append(background_video)
+
+source.elements.append(composition)
+
+#------------------------
 
 
 for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
@@ -147,7 +168,6 @@ response = requests.post(
 
 if response.status_code >= 200 & response.status_code<300:  # Código 200 indica éxito
     print("La solicitud a createToMate fue exitosa con el codido: ",response.status_code)
-    print("Respuesta:", response.json())  # Imprimir la respuesta JSON
 else:
     print("La solicitud falló con el código de estado:", response.status_code)
     print("Mensaje de error:", response.text)  # Imprimir el mensaje de error si hay uno

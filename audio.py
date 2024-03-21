@@ -9,7 +9,8 @@ from urllib.parse import urlparse, parse_qs
 from urllib.parse import urlparse
 from mutagen.mp3 import MP3
 from openai import OpenAI
-from config import API_KEY
+from config import API_KEY,TEXTO_INICIAL,NUMBER_OF_QUESTIONS
+import math
 
 client = OpenAI(api_key=API_KEY)
 def authenticate():
@@ -29,7 +30,7 @@ def authenticate():
         # Guarda las credenciales para usarlas la próxima vez
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
-    print("Credenciales correctas, continuando con el script...")
+    print("Credenciales correctas, Subiendo archivo a drive...")
     return creds
 def upload_file_to_google_drive(file_path, file_name):
     creds = authenticate()
@@ -84,7 +85,7 @@ def eliminar_archivos_en_ruta(ruta):
                 if os.path.isfile(ruta_archivo):
                     os.remove(ruta_archivo)
                     print(f"Archivo eliminado: {ruta_archivo}")
-            print("Todos los archivos han sido eliminados.")
+            print("Todos los archivos de audio locales han sido eliminados.")
         else:
             print(f"La ruta especificada '{ruta}' no es un directorio válido.")
     except Exception as e:
@@ -139,6 +140,16 @@ def obtener_duracion_mp3_en_segundos(archivo_mp3): # os.path.abspath(os.path.joi
     except Exception as e:
         print("Error al obtener la duración del archivo MP3:", e)
         return None
+
+def obtener_duracion_mp3_en_segundos_sin_formato(archivo_mp3): # os.path.abspath(os.path.join(os.getcwd(), 'audio', f"{1}.mp3"))
+    try:
+        # Obtener la duración del archivo MP3
+        audio = MP3(archivo_mp3)
+        duracion_segundos = audio.info.length
+        return math.ceil(duracion_segundos)
+    except Exception as e:
+        print("Error al obtener la duración del archivo MP3:", e)
+        return None
     
 
 def download_questions_audios_local(questions):
@@ -146,7 +157,14 @@ def download_questions_audios_local(questions):
         speech_file_path = Path(__file__).parent / "audio" / (str(index_pregunta) + ".mp3")
         response = client.audio.speech.create(
         model="tts-1",
-        voice="alloy",
+        voice="echo",
         input=question["question"]
         )
         response.stream_to_file(speech_file_path)
+    speech_file_path = Path(__file__).parent / "audio" / (str(NUMBER_OF_QUESTIONS) + ".mp3")
+    response = client.audio.speech.create(
+    model="tts-1",
+    voice="echo",
+    input=str(TEXTO_INICIAL)
+    )
+    response.stream_to_file(speech_file_path)
