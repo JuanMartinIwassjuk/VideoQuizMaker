@@ -1,4 +1,4 @@
-#Generación del Video
+# Generación del Video
 
 Para crear un video , seguir los siguientes pasos:
 
