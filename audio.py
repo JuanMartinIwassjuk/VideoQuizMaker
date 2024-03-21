@@ -11,6 +11,10 @@ from mutagen.mp3 import MP3
 from openai import OpenAI
 from config import API_KEY,TEXTO_INICIAL,NUMBER_OF_QUESTIONS
 import math
+from tempfile import NamedTemporaryFile
+from eyed3 import load
+import gdown
+
 
 client = OpenAI(api_key=API_KEY)
 def authenticate():
@@ -168,3 +172,23 @@ def download_questions_audios_local(questions):
     input=str(TEXTO_INICIAL)
     )
     response.stream_to_file(speech_file_path)
+
+
+def obtener_duracion_mp3_en_segundos_desde_drive(url_drive):
+    try:
+        # Autenticar y obtener las credenciales
+        creds = authenticate()
+        # Descargar el archivo MP3 de Google Drive
+        temp_file_path = 'temp_audio.mp3'
+        gdown.download(url_drive, temp_file_path, quiet=False)
+        # Obtener la duración del archivo MP3
+        audio = load(temp_file_path)
+        duracion_segundos = audio.info.time_secs
+
+        # Eliminar el archivo temporal
+        os.remove(temp_file_path)
+
+        return (str(duracion_segundos)+' s')
+    except Exception as e:
+        print("Error al obtener la duración del archivo MP3 desde Google Drive:", e)
+        return None

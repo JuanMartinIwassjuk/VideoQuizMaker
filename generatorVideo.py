@@ -86,7 +86,7 @@ video = Video(source)
 
 #------------------------Pregunta Inicial
 composition = Composition("Question" + str(NUMBER_OF_QUESTIONS), 1,str(audio.obtener_duracion_mp3_en_segundos_sin_formato(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3")))+2)+' s' )
-inicial_text = Element("text", track=43, text=str(TEXTO_INICIAL), y="21.80%", fill_color="#000000", background_color="#ffffff")
+inicial_text = Element("text", track=43, text=str(TEXTO_INICIAL), y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)")
 inicial_text.animations.append(text_start_anim)
 inicial_text.animations.append(text_end_anim)
 composition.elements.append(inicial_text)
@@ -109,7 +109,7 @@ source.elements.append(composition)
 for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     composition = Composition("Question" + str(index_pregunta), 1, "10 s")
     first_track=10
-    question_text = Element("text", track=2, text=question["question"], y="21.80%", fill_color="#000000", background_color="#ffffff")
+    question_text = Element("text", track=2, text=question["question"], y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)")
     question_text.animations.append(text_start_anim)
     question_text.animations.append(text_end_anim)
     composition.elements.append(question_text)
@@ -176,4 +176,3 @@ audio.eliminar_archivos_en_ruta(os.getcwd()+'/audio')
 
 #for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
 #    audio.eliminar_archivo_de_drive(audioDrive[index_pregunta])
-

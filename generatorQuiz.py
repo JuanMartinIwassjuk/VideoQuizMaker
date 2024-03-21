@@ -11,7 +11,7 @@ def get_openai_response_in_json_format(number_of_questions, number_of_options, d
         response = client.chat.completions.create(
         model=MODEL_NAME,
         messages=[
-            {"role": "system", "content": f'You need to provide {number_of_questions} specific questions about the topic {topic} with a difficulty level of {difficulty_level}. Each question should have {number_of_options} options, including the correct answer. Do not use single quotes, and your response should be in JSON format like this: openkey "questions": [ openkey "question": "Sample question?", "options": ["Option A", "Option B", "Option C"], "correct_answer": "Option A" closedkey ] closedkey'},
+            {"role": "system", "content": f'You need to provide {number_of_questions} specific questions about the topic {topic} with a difficulty level of {difficulty_level}. Each question should have {number_of_options} options, including the correct answer. Do not use single quotes, and your response should be in JSON format like this: openkey "questions": [ openkey "question": "Sample question?", "options": ["A) Option A",B) "Option B", "C) Option C"], "correct_answer": "A) Option A" closedkey ] closedkey'},
             {"role": "user", "content": prompt}
         ]
             )
