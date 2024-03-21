@@ -4,13 +4,13 @@ Para crear un video , seguir los siguientes pasos:
 
 1. Ejecutar el siguiente comando para descargar las dependencias de python:
 
-pip install openai requests google-api-python-client google-auth-oauthlib mutagen
+pip install requests openai google-api-python-client mutagen eyed3 gdown  google-auth-oauthlib
 
 
 2. Debés tener una cuenta de "creatomate.com" y obtener el código de autorización para enviar el request: debe ser algo así:
 c623356c25cf47a999df4684c11d6bc8af5g486da8ac9ab718atkc26ada2f5cb37981ab32767cd0561936e91e3e08b01
 
-1. Crear el archivo de configuración
+3. Crear el archivo de configuración
 En la carpeta principal del proyecto, crea un archivo llamado "config.py".
 
 3.1. Configuración del archivo
@@ -39,6 +39,15 @@ BACKGROUND_IMG='["url_imagen_pregunta_1","url_imagen_pregunta_2"]'
 
 # La autorización para el envío del request mencionado anteriormente
 AUTORIZACION='c623356c25cf47a999df4684c11d6bc8af5g486da8ac9ab718atkc26ada2f5cb37981ab32767cd0561936e91e3e08b01'
+
+# Lo primero que se verá en el video
+TEXTO_INICIAL = 'Exhibit your intellectual flair!'
+
+# Fondo que acompañará el texto inicial
+FONDO_INCIO ='https://img.freepik.com/foto-gratis/herramientas-deportivas_53876-138077.jpg'
+
+# Musica de Fondo de todo el video
+BACKGROUND_MUSIC='b5dc815e-dcc9-4c62-9405-f94913936bf5'
 
 El archivo para que funcione correctamente deberia quedar algo así:
 ![Los valores proporcionados para "API_KEY" y "autorizacion" son meramente ejemplos ilustrativos y no tienen la funcionalidad real de acceso.](https://github.com/JuanMartinIwassjuk/generatorQuiz/blob/main/ejemploConfig.png?raw=true)
