@@ -1,0 +1,14 @@
+{
+  "questions": [
+    {
+      "question": "Which team has won the most Super Bowl championships in NFL history?",
+      "options": ["New England Patriots", "Pittsburgh Steelers", "Dallas Cowboys"],
+      "correct_answer": "Pittsburgh Steelers"
+    },
+    {
+      "question": "Who is the all-time leading rusher in NFL history?",
+      "options": ["Walter Payton", "Emmitt Smith", "Barry Sanders"],
+      "correct_answer": "Emmitt Smith"
+    }
+  ]
+}
