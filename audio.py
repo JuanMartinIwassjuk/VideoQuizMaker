@@ -201,6 +201,9 @@ def obtener_duracion_mp3_en_segundos_desde_drive(url_drive):
 
 def sumar_tiempos(tiempo1, tiempo2):
     try:
+          # Convertir los tiempos a cadenas
+        tiempo1 = str(tiempo1)
+        tiempo2 = str(tiempo2)
         # Separar los tiempos en número y "s"
         num1, _ = tiempo1.split()
         num2, _ = tiempo2.split()
