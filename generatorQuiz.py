@@ -58,3 +58,24 @@ def obtener_contenido_txt():
     with open(ruta_archivo, 'r') as archivo:
         contenido = archivo.read()
     return contenido
+
+
+
+def verificar_archivo_vacio():
+    if os.path.getsize(os.getcwd()+'/response'+'/'+"lastParameters.txt") == 0:
+        return True
+    else:
+        return False
+
+def es_la_misma_que_anterior(number_of_questions, number_of_options, difficulty_level, topic):
+    if not verificar_archivo_vacio():
+        # Cargar los datos del archivo JSON
+        with open(os.getcwd()+'/response'+'/'+"lastParameters.txt", "r") as file:
+            datos = json.load(file)
+        # Comparar los valores con los parámetros
+        if (datos["number_of_questions"] == number_of_questions and
+            datos["number_of_options"] == number_of_options and
+            datos["difficulty_level"] == difficulty_level and
+            datos["topic"] == topic):
+            return True
+    return False

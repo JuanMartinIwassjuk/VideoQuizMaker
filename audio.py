@@ -1,4 +1,6 @@
 import os
+import generatorQuiz
+import json
 from pathlib import Path
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -9,7 +11,7 @@ from urllib.parse import urlparse, parse_qs
 from urllib.parse import urlparse
 from mutagen.mp3 import MP3
 from openai import OpenAI
-from config import API_KEY,TEXTO_INICIAL,NUMBER_OF_QUESTIONS
+from config import API_KEY,TEXTO_INICIAL,NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC
 import math
 from tempfile import NamedTemporaryFile
 from eyed3 import load
@@ -157,6 +159,9 @@ def obtener_duracion_mp3_en_segundos_sin_formato(archivo_mp3): # os.path.abspath
     
 
 def download_questions_audios_local(questions):
+
+    data=generatorQuiz.obtener_contenido_txt()
+    dataJson=json.loads(data)
     for index_pregunta, question in enumerate(questions):
         speech_file_path = Path(__file__).parent / "audio" / (str(index_pregunta) + ".mp3")
         response = client.audio.speech.create(
@@ -172,7 +177,6 @@ def download_questions_audios_local(questions):
     input=str(TEXTO_INICIAL)
     )
     response.stream_to_file(speech_file_path)
-
 
 def obtener_duracion_mp3_en_segundos_desde_drive(url_drive):
     try:

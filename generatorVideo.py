@@ -18,9 +18,14 @@ data = generatorQuiz.get_openai_response_in_json_format(NUMBER_OF_QUESTIONS,NUMB
 
 quiz_data_dict=json.loads(data)
 
-audio.download_questions_audios_local(quiz_data_dict["questions"])
-
 ruta_audios = Path(os.getcwd()+'/audio')
+if ((generatorQuiz.verificar_archivo_vacio()==False) & (generatorQuiz.es_la_misma_que_anterior(NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC)==False)): # Si hay algo y no es la misma q la anterior
+   audio.eliminar_archivos_en_ruta(ruta_audios)
+
+if len(list(ruta_audios.glob("*"))) == NUMBER_OF_QUESTIONS: # cuando no haya nada o sean los mismos q la anterior
+    audio.download_questions_audios_local(quiz_data_dict["questions"])
+
+
 
 audioDrive=[]
 
@@ -28,7 +33,6 @@ while True:  #Espera a que se suban todos los archivos de forma local
     if len(list(ruta_audios.glob("*"))) >= NUMBER_OF_QUESTIONS:
         break
     time.sleep(1)
-
 for index_pregunta, question in enumerate(quiz_data_dict["questions"]):#Esto sube los audios desde local a drive
     urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(index_pregunta)+'.mp3', '/audio'+'/'+str(index_pregunta)+'.mp3')
     audioDrive.append(urlDrive)
@@ -41,7 +45,7 @@ while True:  #Espera a que se suban todos los archivos al Drive
         time.sleep(10)
         break
     time.sleep(1)    
-
+print("hola6")
 
 text_start_anim = Animation(
     time="start s",
@@ -103,6 +107,7 @@ composition.elements.append(background_video)
 source.elements.append(composition)
 
 countdown_audio = 'https://drive.google.com/file/d/1bfo_R5sqar-7RqAG3SgVKAKvFkq06_IV/view?usp=drive_link'
+transition_audio = 'https://drive.google.com/file/d/1MbV3O38hAHr6eLX5eqet_ocELDuvWSnS/view?usp=drive_link'
 #------------------------
 
 
@@ -132,9 +137,13 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     countdown = Audio("countdown", second_track, duracion_audio_pregunta, "5 s", True, countdown_audio, "5%", "0 s")
     composition.elements.append(countdown)
     third_track=second_track+10
-    correct = Audio("correct", third_track, audio.sumar_tiempos(duracion_audio_pregunta,"5 s"), "1.85 s", True, "530d3905-bd5b-4534-9532-f6657ed03296", "50%", "0 s")
+    tiempo_audio_correct= audio.sumar_tiempos(duracion_audio_pregunta,"5.1 s")
+    correct = Audio("correct", third_track, tiempo_audio_correct, "1.85 s", True, "530d3905-bd5b-4534-9532-f6657ed03296", "50%", "0 s")
     composition.elements.append(countdown)
     composition.elements.append(correct)
+    if(index_pregunta<NUMBER_OF_QUESTIONS-1):
+        ta = Audio("transition", 87, audio.sumar_tiempos(tiempo_audio_correct, "2.15 s"), "1 s", True, transition_audio, "100%", "0 s")
+        composition.elements.append(ta)
 
     if index_pregunta > 0:
         composition.animations.append(comp_start_anim)
@@ -176,7 +185,7 @@ else:
     print("La solicitud falló con el código de estado:", response.status_code)
     print("Mensaje de error:", response.text)  # Imprimir el mensaje de error si hay uno
 
-audio.eliminar_archivos_en_ruta(os.getcwd()+'/audio')
+
 
 #for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
 #    audio.eliminar_archivo_de_drive(audioDrive[index_pregunta])
