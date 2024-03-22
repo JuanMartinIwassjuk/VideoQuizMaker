@@ -220,3 +220,14 @@ def sumar_tiempos(tiempo1, tiempo2):
     except Exception as e:
         print("Error al sumar los tiempos:", e)
         return None
+
+def tiempo_a_float(tiempo):
+    try:
+        # Convertir el tiempo a número
+        num_tiempo = float(tiempo.split()[0])
+        
+        return num_tiempo
+    except Exception as e:
+        print("Error al convertir el tiempo:", e)
+        return None
+

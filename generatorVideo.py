@@ -111,9 +111,9 @@ inicial_text_to_speech = Audio("Audio" + str(NUMBER_OF_QUESTIONS), 3, "0 s", aud
 composition.elements.append(inicial_text_to_speech)
 #
 animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
-background_video = Image(type="video", source=str(FONDO_INCIO), track=1, time=0, duration=10, clip=True)
+background_video = Image(type="video", source=str(FONDO_INCIO), track=1, time=0, duration=audio.tiempo_a_float(duracion_presentacion), clip=True)
 background_video.animations.append(animation)
-image = Image(str(FONDO_INCIO), 4, 10, True, [])
+image = Image(str(FONDO_INCIO), 4, audio.tiempo_a_float(duracion_presentacion), True, [])
 image.animations.append(animation)
 composition.elements.append(image)
 composition.elements.append(background_video)
@@ -128,7 +128,11 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     duracion_pregunta="0 s"
     composition = Composition("Question" + str(index_pregunta), 1, duraciones_preguntas[index_pregunta])
     first_track=10
-    question_text = Element("text", track=2, text=question["question"], y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)",font_size="13 vmin",)
+
+    logo = Image("https://drive.google.com/file/d/1BlmrY0pIuzFBqlRdblIyeyAAV8WQ8cNE/view?usp=drive_link", track=50,duration=duraciones_preguntas[index_pregunta],clip=False,animations=[],border_radius="50 vmin",x="85%" ,y="11.80%", width="12%", height="6%", time="0 s")
+    composition.elements.append(logo)
+
+    question_text = Element("text", track=2, text=question["question"], y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)",font_size="15 vmin",)
     question_text.animations.append(text_start_anim)
     question_text.animations.append(text_end_anim)
     question_text.stroke_color = "#000000"
@@ -143,12 +147,13 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     composition.elements.append(question_to_speech)
 
     animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
-    background_video = Image(type="video", source=background_list_dict[index_pregunta], track=1, time=0, duration=duraciones_preguntas[index_pregunta], clip=True)
+    background_video = Image(type="video", source=background_list_dict[index_pregunta], track=1, time=0, duration=audio.tiempo_a_float(duraciones_preguntas[index_pregunta]), clip=True)
     background_video.animations.append(animation)
     image = Image(background_list_dict[index_pregunta], 1, 10, True, [])
     image.animations.append(animation)
     composition.elements.append(image)
     composition.elements.append(background_video)
+
 
     counter = Image("06311a89-c770-48e1-8a33-b5c1c417c787", track=46,duration="5 s",clip=False,animations=[], y="7%", width="20%", height="12%", time=duracion_audio_pregunta)
     composition.elements.append(counter)
