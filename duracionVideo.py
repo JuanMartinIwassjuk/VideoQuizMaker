@@ -19,7 +19,7 @@ data = generatorQuiz.get_openai_response_in_json_format(NUMBER_OF_QUESTIONS,NUMB
 quiz_data_dict=json.loads(data)
 def get_duraciones(quiz_data_dict):
     duracion_video="0 s"
-    duracion_presentacion=str(audio.obtener_duracion_mp3_en_segundos_sin_formato(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3")))+2.5)+' s'
+    duracion_presentacion=audio.obtener_duracion_mp3_en_segundos(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3")))
     duracion_video=audio.sumar_tiempos(duracion_presentacion,duracion_video)
 
     duraciones_preguntas=[]

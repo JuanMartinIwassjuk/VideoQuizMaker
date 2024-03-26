@@ -33,7 +33,7 @@ class Audio:
         self.audio_fade_out = audio_fade_out
 
 class Image:
-    def __init__(self, source, track, duration, clip, animations=[], type="image",x="", y="",border_radius="", width="", height="", time=0):
+    def __init__(self, source, track, duration, clip, animations=[], type="image",x="", y="",border_radius="", width="", height="", time=0,volume=""):
         self.type = type
         self.source = source
         self.track = track
@@ -50,6 +50,8 @@ class Image:
             self.x = x
         if (border_radius != ""):
             self.border_radius = border_radius
+        if(volume != ""):
+            self.volume = volume
 
 class Element:
     def __init__(self, type, track, animations=[], y="", x="", width="", height="", x_alignment="", y_alignment="", text="", font_family="", font_weight="600", font_size_maximum="", fill_color="", stroke_color="", stroke_width="", background_color="", z_index="", time="", duration="", font_size=""):

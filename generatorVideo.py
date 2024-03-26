@@ -11,7 +11,7 @@ from creatomate import Animation, Image, Element, Composition, Source, Video, Au
 from config import NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC,BACKGROUND_IMG,AUTORIZACION,TEXTO_INICIAL,FONDO_INCIO,BACKGROUND_MUSIC
 
 
-#data = '{ "questions": [ { "question": "Who is known as The King in the NBA?", "options": [ "LeBron James", "Kobe Bryant", "Stephen Curry" ], "correct_answer": "LeBron James" }, { "question": "Which team has won the most NBA championships?", "options": [ "Boston Celtics", "Los Angeles Lakers", "Chicago Bulls" ], "correct_answer": "Boston Celtics" }, { "question": "Which player holds the record for the most points scored in a single NBA game?", "options": [ "Wilt Chamberlain", "Michael Jordan", "Kobe Bryant" ], "correct_answer": "Wilt Chamberlain" }, { "question": "Who is the NBAs all-time leader in assists?", "options": [ "John Stockton", "Magic Johnson", "Steve Nash" ], "correct_answer": "John Stockton" } ] }'
+#data = '{ "questions": [ { "question": "Which of the following is NOT a function of the liver?", "options": ["A) Regulation of blood sugar levels", "B) Production of insulin", "C) Detoxification of harmful substances"], "correct_answer": "B) Production of insulin" }, { "question": "What is the name of the smallest bone in the human body?", "options": ["A) Tibia", "B) Stapes", "C) Femur"], "correct_answer": "B) Stapes" }, { "question": "Which organ helps digest food and absorbs nutrients?", "options": ["A) Liver", "B) Pancreas", "C) Stomach"], "correct_answer": "C) Stomach" }, { "question": "What is the normal body temperature in degrees Celsius?", "options": ["A) 37°C", "B) 25°C", "C) 45°C"], "correct_answer": "A) 37°C" }, { "question": "What is the largest organ of the human body by surface area?", "options": ["A) Liver", "B) Skin", "C) Heart"], "correct_answer": "B) Skin" } ] }'
 
 background_list_dict = json.loads(BACKGROUND_IMG)
 
@@ -21,9 +21,9 @@ quiz_data_dict=json.loads(data)
 
 ruta_audios = Path.cwd() / 'audio'
 if ((generatorQuiz.verificar_archivo_vacio()==False) & (generatorQuiz.es_la_misma_que_anterior(NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC)==False)): # Si hay algo y no es la misma q la anterior
-   audio.eliminar_archivos_en_ruta(ruta_audios)
+    audio.eliminar_archivos_en_ruta(ruta_audios)
 
-if len(list(ruta_audios.glob("*"))) == NUMBER_OF_QUESTIONS: # cuando no haya nada o sean los mismos q la anterior
+if len(list(ruta_audios.glob("*"))) == 0: # cuando no haya nada o sean los mismos q la anterior
     audio.download_questions_audios_local(quiz_data_dict["questions"])
 
 
@@ -34,6 +34,7 @@ while True:  #Espera a que se suban todos los archivos de forma local
     if len(list(ruta_audios.glob("*"))) >= NUMBER_OF_QUESTIONS:
         break
     time.sleep(1)
+
 for index_pregunta, question in enumerate(quiz_data_dict["questions"]):#Esto sube los audios desde local a drive
     urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(index_pregunta)+'.mp3', '/audio'+'/'+str(index_pregunta)+'.mp3')
     audioDrive.append(urlDrive)
@@ -83,9 +84,9 @@ comp_start_anim = Animation(
 )
 
 
-transition_audio_drive='https://drive.google.com/file/d/1MbV3O38hAHr6eLX5eqet_ocELDuvWSnS/view?usp=drive_link'
-countdown_audio_drive='https://drive.google.com/file/d/1bfo_R5sqar-7RqAG3SgVKAKvFkq06_IV/view?usp=drive_link'
-ruta_audio_correcta_drive='https://drive.google.com/file/d/1dZQS5rdjIBmy59rlY34gJFBP7L8gG_4c/view?usp=drive_link'
+transition_audio_drive='https://drive.google.com/file/d/1MbV3O38hAHr6eLX5eqet_ocELDuvWSnS/view?usp=sharing'
+countdown_audio_drive='https://drive.google.com/file/d/14VWoFOFrfkBViPbyXM6aJBECn-95qZ3w/view?usp=sharing'
+ruta_audio_correcta_drive='https://drive.google.com/file/d/1dZQS5rdjIBmy59rlY34gJFBP7L8gG_4c/view?usp=sharing'
 
 countdown_audio = Path.cwd() / 'audiosEstaticos' / 'countdown.mp3'
 transition_audio = Path.cwd() / 'audiosEstaticos' / 'transition.mp3'
@@ -96,8 +97,8 @@ duracion_video,duraciones_preguntas,duracion_presentacion=duracionVideo.get_dura
 
 
 #------------------------Presentacion
-source = Source('mp4', 1080, 1920, audio.sumar_tiempos(duracion_video,"1.5 s"))
-background_music = Audio("Music", 18, "0 s", None, True, str(BACKGROUND_MUSIC), "5%", "2 s")
+source = Source('mp4', 1080, 1920, duracion_video)
+background_music = Audio("Music", 18, "0 s", None, True, str(BACKGROUND_MUSIC), "30%", "1 s")
 source.elements.append(background_music)
 video = Video(source)
 
@@ -111,7 +112,7 @@ inicial_text_to_speech = Audio("Audio" + str(NUMBER_OF_QUESTIONS), 3, "0 s", aud
 composition.elements.append(inicial_text_to_speech)
 #
 animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
-background_video = Image(type="video", source=str(FONDO_INCIO), track=1, time=0, duration=audio.tiempo_a_float(duracion_presentacion), clip=True)
+background_video = Image(type="video", source=str(FONDO_INCIO), track=1, time=0, duration=audio.tiempo_a_float(duracion_presentacion), clip=True,volume="0%")
 background_video.animations.append(animation)
 image = Image(str(FONDO_INCIO), 4, audio.tiempo_a_float(duracion_presentacion), True, [])
 image.animations.append(animation)
@@ -135,6 +136,7 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     question_text = Element("text", track=2, text=question["question"], y="21.80%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)",font_size="15 vmin",)
     question_text.animations.append(text_start_anim)
     question_text.animations.append(text_end_anim)
+
     question_text.stroke_color = "#000000"
     composition.elements.append(question_text)
 
@@ -146,12 +148,12 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     question_to_speech = Audio("Audio" + str(index_pregunta), first_track, "0 s", duracion_audio_pregunta, True, audioDrive[index_pregunta], "100%", "0 s")
     composition.elements.append(question_to_speech)
 
-    animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
+    #animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
     background_video = Image(type="video", source=background_list_dict[index_pregunta], track=1, time=0, duration=audio.tiempo_a_float(duraciones_preguntas[index_pregunta]), clip=True)
     background_video.animations.append(animation)
-    image = Image(background_list_dict[index_pregunta], 1, 10, True, [])
-    image.animations.append(animation)
-    composition.elements.append(image)
+    #image = Image(background_list_dict[index_pregunta], 1, 10, True, [])
+    #image.animations.append(animation)
+    #composition.elements.append(image)
     composition.elements.append(background_video)
 
 
@@ -214,6 +216,7 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
         composition.elements.append(countdown_text_number)
 
     source.elements.append(composition)
+
 
 output = json.loads(video.toJSON())
 response = requests.post(
