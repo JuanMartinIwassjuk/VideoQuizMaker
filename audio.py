@@ -38,6 +38,7 @@ def authenticate():
             token.write(creds.to_json())
     print("Credenciales correctas, Subiendo archivo a drive...")
     return creds
+
 def upload_file_to_google_drive(file_path, file_name):
     creds = authenticate()
     drive_service = build('drive', 'v3', credentials=creds)
@@ -158,10 +159,57 @@ def obtener_duracion_mp3_en_segundos_sin_formato(archivo_mp3): # os.path.abspath
         return None
     
 
+def obtenerRutaDriveCharOption(option):
+    try:
+        if option == 'a':
+            return "https://drive.google.com/file/d/1o5fBjHStBDW0Uj4SKFrlWVsQBpzWwvjO/view?usp=sharing"
+        elif option == 'b':
+            return "https://drive.google.com/file/d/1yBOWdA_UNMTI9vHoIuXflMPm912e6hoi/view?usp=sharing"
+        elif option == 'c':
+            return "https://drive.google.com/file/d/1ynis4cQVIa9wvRShHDTqcO1e_mX5Phuv/view?usp=sharing"
+        else:
+            return "Opción no válida. Debe ser 'a', 'b' o 'c'."
+    except Exception as e:
+        print("Error al obtener la ruta:", e)
+        return None
+
+
+def formato_natural_string(input_string): #B) Tim McGraw
+    text_after_parenthesis = input_string.split(") ")[1]
+    return text_after_parenthesis
+
+
+def cargarOpcionesCorrectas(questions,opcionesCorrectas):
+    for index_pregunta, question in enumerate(questions):
+        option_correct = question["correct_answer"]
+        option_char = option_correct[0]
+        print("se cargo la opcion ",option_char)
+        opcionesCorrectas.append(option_char.lower())
+
+def pathOptionAudio(option):
+    # Verificar que la opción sea un carácter
+    if not isinstance(option, str):
+        raise ValueError("La opción debe ser un carácter (string)")
+
+    # Verificar que la opción sea un carácter alfabético
+    if not option.isalpha() or len(option) != 1:
+        raise ValueError("La opción debe ser un único carácter alfabético")
+
+    # Construir la ruta del archivo de audio
+    ruta_audio = os.path.join(os.getcwd(), 'audiosEstaticos', f'option{option}.mp3')
+    
+    return ruta_audio
+
+def obtenerDuracionSegundosAudioDeOpcion(opcion):
+    return obtener_duracion_mp3_en_segundos(pathOptionAudio(opcion))
+
+    
+
+
 def download_questions_audios_local(questions):
 
-    data=generatorQuiz.obtener_contenido_txt()
-    dataJson=json.loads(data)
+    #data=generatorQuiz.obtener_contenido_txt()
+    #dataJson=json.loads(data)
     for index_pregunta, question in enumerate(questions):
         speech_file_path = Path(__file__).parent / "audio" / (str(index_pregunta) + ".mp3")
         response = client.audio.speech.create(
@@ -170,6 +218,13 @@ def download_questions_audios_local(questions):
         input=question["question"]
         )
         response.stream_to_file(speech_file_path)
+        speech_file_path_correct = Path(__file__).parent / "audio" / (str(index_pregunta)+"-correct" + ".mp3")
+        response = client.audio.speech.create(
+        model="tts-1",
+        voice="echo",
+        input=formato_natural_string(question["correct_answer"])
+        )
+        response.stream_to_file(speech_file_path_correct)
     speech_file_path = Path(__file__).parent / "audio" / (str(NUMBER_OF_QUESTIONS) + ".mp3")
     response = client.audio.speech.create(
     model="tts-1",
@@ -220,6 +275,27 @@ def sumar_tiempos(tiempo1, tiempo2):
     except Exception as e:
         print("Error al sumar los tiempos:", e)
         return None
+
+
+def comparar_tiempos(tiempo1, tiempo2):
+    try:
+        # Separar los tiempos en número y "s"
+        num1, _ = tiempo1.split()
+        num2, _ = tiempo2.split()
+
+        # Eliminar el caracter "s" de los números
+        num1 = float(num1)
+        num2 = float(num2)
+
+        # Comparar los tiempos y devolver el más grande
+        if num1 >= num2:
+            return tiempo1
+        else:
+            return tiempo2
+    except Exception as e:
+        print("Error al comparar los tiempos:", e)
+        return None
+
 
 def tiempo_a_float(tiempo):
     try:

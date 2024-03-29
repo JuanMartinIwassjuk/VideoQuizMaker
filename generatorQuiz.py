@@ -28,6 +28,13 @@ def get_openai_response_in_json_format(number_of_questions, number_of_options, d
         return json_response
     else: return obtener_contenido_txt()
           
+def obtener_contenido_txt():
+    ruta_archivo = os.path.join(os.getcwd(), 'response', 'data.txt')
+    with open(ruta_archivo, 'r') as archivo:
+        contenido = archivo.read()
+    return contenido
+
+
 def guardar_datos_en_json(number_of_questions, number_of_options, difficulty_level, topic):
     # Crear un diccionario con los datos
     data = {
@@ -53,12 +60,6 @@ def comparar_parametros_con_json(number_of_questions, number_of_options, difficu
         else:
             return False
     else: return False
-def obtener_contenido_txt():
-    ruta_archivo = os.path.join(os.getcwd(), 'response', 'data.txt')
-    with open(ruta_archivo, 'r') as archivo:
-        contenido = archivo.read()
-    return contenido
-
 
 
 def verificar_archivo_vacio():

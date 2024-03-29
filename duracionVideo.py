@@ -12,14 +12,16 @@ from config import NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, T
 
 countdown_audio = Path.cwd() / 'audiosEstaticos' / 'countdown.mp3'
 transition_audio = Path.cwd() / 'audiosEstaticos' / 'transition.mp3'
-ruta_audio_correcta =ruta_audios = Path.cwd() / 'audiosEstaticos' / 'correct.mp3'
+ruta_audio_correcta = Path.cwd() / 'audiosEstaticos' / 'correct.mp3'
 
-data = generatorQuiz.get_openai_response_in_json_format(NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC)
+duracion_audio_option = audio.obtener_duracion_mp3_en_segundos(Path.cwd() / 'audiosEstaticos' / 'option.mp3')
 
-quiz_data_dict=json.loads(data)
-def get_duraciones(quiz_data_dict):
+
+
+def get_duraciones(quiz_data_dict,opcionesCorrectas):
     duracion_video="0 s"
     duracion_presentacion=audio.obtener_duracion_mp3_en_segundos(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3")))
+    duracion_presentacion=audio.sumar_tiempos(duracion_presentacion,"1 s")
     duracion_video=audio.sumar_tiempos(duracion_presentacion,duracion_video)
 
     duraciones_preguntas=[]
@@ -31,16 +33,28 @@ def get_duraciones(quiz_data_dict):
         duracion_video=audio.sumar_tiempos(duracion_audio_pregunta,duracion_video)
         duracion_pregunta=audio.sumar_tiempos(duracion_audio_pregunta,duracion_pregunta)
 
-        tiempo_audio_correct= audio.sumar_tiempos(duracion_audio_pregunta,"5.1 s")#donde empieza a sonar audio correcto
         duracion_video=audio.sumar_tiempos("5.1 s",duracion_video)#lo q dura el timer y la espera del sonido de respuesta correcta
         duracion_pregunta=audio.sumar_tiempos("5.1 s",duracion_pregunta)
-        tiempo_max_timer=duracion_pregunta
+
+
         duracion_audio_correcto=audio.obtener_duracion_mp3_en_segundos(ruta_audio_correcta)
 
-        tiempo_max_sonido_correcto=audio.sumar_tiempos(tiempo_audio_correct,duracion_audio_correcto)
 
-        duracion_video=audio.sumar_tiempos(duracion_audio_correcto,duracion_video)#lo q dura el sonido de pregunta correcta
-        duracion_pregunta=audio.sumar_tiempos(duracion_audio_correcto,duracion_pregunta)
+        #duracion_opcion_audio=audio.obtener_duracion_mp3_en_segundos(Path.cwd() / 'audiosEstaticos' / 'option.mp3') #duracion de lo que tarda en decir decir option     
+        duracion_opcion_correcta_char=audio.obtenerDuracionSegundosAudioDeOpcion(opcionesCorrectas[index_pregunta])#duracion de lo que tarda en decir la letra de opcion correcta
+       
+    
+        #duracion_opcion_correcta_total=audio.sumar_tiempos(duracion_opcion_audio,duracion_opcion_correcta_char)#lo que tarda en decir opcion x
+        duracion_opcion_correcta_total=audio.sumar_tiempos(duracion_opcion_correcta_char,"0.5 s")#se le agrega un segundo de espera
+
+        
+        duracion_contenido_correcto = audio.obtener_duracion_mp3_en_segundos( Path.cwd() / 'audio' / (str(index_pregunta) + "-correct" + ".mp3") ) #Esto es lo que tarda en decir "option x" + una pausa de 0.5s
+        duracion_opcion_correcta_total=audio.sumar_tiempos(duracion_opcion_correcta_total,duracion_contenido_correcto)
+        
+        
+        
+        duracion_video=audio.sumar_tiempos(audio.comparar_tiempos(duracion_audio_correcto,duracion_opcion_correcta_total),duracion_video)#lo q dura el sonido de pregunta correcta
+        duracion_pregunta=audio.sumar_tiempos(audio.comparar_tiempos(duracion_audio_correcto,duracion_opcion_correcta_total),duracion_pregunta)
 
         if(index_pregunta<NUMBER_OF_QUESTIONS-1):
             duracion_transicion=audio.obtener_duracion_mp3_en_segundos(transition_audio)
