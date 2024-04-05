@@ -8,13 +8,17 @@ import duracionVideo
 from pathlib import Path
 import generatorQuiz
 from creatomate import Animation, Image, Element, Composition, Source, Video, Audio
-from config import NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC,BACKGROUND_IMG,AUTORIZACION,TEXTO_INICIAL,FONDO_INCIO,BACKGROUND_MUSIC
+from config import NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC,BACKGROUND_IMG,AUTORIZACION,TEXTO_INICIAL,FONDO_INCIO,BACKGROUND_MUSIC,TEXTO_FINAL
 
-data = '{ "questions": [ { "question": "What is MrBeast\'s real name?", "options": ["A) Jimmy Donaldson", "B) Mark Zuckerberg", "C) Felix Kjellberg"], "correct_answer": "A) Jimmy Donaldson" }, { "question": "In which year did MrBeast start his YouTube channel?", "options": ["A) 2015", "B) 2016", "C) 2017"], "correct_answer": "B) 2016" } ] }'
+
+
+#Si se quiere generar automaticamente hay q descomentar esta línea
+#data = generatorQuiz.get_openai_response_in_json_format(NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC)
+
+data = '{ "questions": [ { "question": "Which country is famous for its Oktoberfest celebration?", "options": [ "A) Germany", "B) France", "C) Australia" ], "correct_answer": "A) Germany" }, { "question": "What is the name of the famous drawing by Leonardo da Vinci that represents the ideal proportions of the human body?", "options": [ "A) The Last Supper", "B) Mona Lisa", "C) Vitruvian Man" ], "correct_answer": "C) Vitruvian Man" }, { "question": "What is the traditional dance of Hawaii called?", "options": [ "A) Hula", "B) Flamenco", "C) Salsa" ], "correct_answer": "A) Hula" },{ "question": "What is the traditional New Year celebration called in China?", "options": [ "A) Diwali", "B) Ramadan", "C) Chinese New Year" ], "correct_answer": "C) Chinese New Year" }, { "question": "Which city is famous for its Carnival celebration?", "options": [ "A) New Orleans", "B) Rio de Janeiro", "C) Venice" ], "correct_answer": "B) Rio de Janeiro" }, { "question": "What is the capital city of Spain?", "options": [ "A) Madrid", "B) Barcelona", "C) Seville" ], "correct_answer": "A) Madrid" } ] }'
 
 background_list_dict = json.loads(BACKGROUND_IMG)
 
-#data = generatorQuiz.get_openai_response_in_json_format(NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC)
 
 quiz_data_dict=json.loads(data)
 
@@ -22,36 +26,10 @@ quiz_data_dict=json.loads(data)
 audioDrive=[]
 audioDriveRtaCorrecta=[]
 opcionesCorrectas=[]
-
+    
 ruta_audios = Path.cwd() / 'audio'
-if ((generatorQuiz.verificar_archivo_vacio()==False) & (generatorQuiz.es_la_misma_que_anterior(NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC)==False)): # Si hay algo y no es la misma q la anterior
-    audio.eliminar_archivos_en_ruta(ruta_audios)
-
-if len(list(ruta_audios.glob("*"))) == 0: # cuando no haya nada o sean los mismos q la anterior
-    audio.download_questions_audios_local(quiz_data_dict["questions"])
-
-audio.cargarOpcionesCorrectas(quiz_data_dict["questions"],opcionesCorrectas)
-
-
-while True:  #Espera a que se suban todos los archivos de forma local
-    if len(list(ruta_audios.glob("*"))) >= NUMBER_OF_QUESTIONS:
-        break
-    time.sleep(1)
-
-for index_pregunta, question in enumerate(quiz_data_dict["questions"]):#Esto sube los audios desde local a drive
-    urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(index_pregunta)+'.mp3', '/audio'+'/'+str(index_pregunta)+'.mp3')
-    audioDrive.append(urlDrive)
-    urlDriveCorrecta = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(index_pregunta)+"-correct"+'.mp3', '/audio'+'/'+str(index_pregunta)+'.mp3')
-    audioDriveRtaCorrecta.append(urlDriveCorrecta)
-urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(NUMBER_OF_QUESTIONS)+'.mp3', '/audio'+'/'+str(NUMBER_OF_QUESTIONS)+'.mp3')#es el texto inicial
-audioDrive.append(urlDrive)
-
-
-while True:  #Espera a que se suban todos los archivos al Drive
-    if audio.obtener_cantidad_archivos_en_carpeta(urlDrive) >= NUMBER_OF_QUESTIONS:
-        time.sleep(10)
-        break
-    time.sleep(1)    
+#if ((generatorQuiz.verificar_archivo_vacio()==False) & (generatorQuiz.es_la_misma_que_anterior(NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, TOPIC)==False)): # Si hay algo y no es la misma q la anterior
+audio.eliminar_archivos_en_ruta(ruta_audios)
 
 text_start_anim = Animation(
     time="start s",
@@ -90,19 +68,64 @@ comp_start_anim = Animation(
 
 
 transition_audio_drive='https://drive.google.com/file/d/1MbV3O38hAHr6eLX5eqet_ocELDuvWSnS/view?usp=sharing'
+
 countdown_audio_drive='https://drive.google.com/file/d/14VWoFOFrfkBViPbyXM6aJBECn-95qZ3w/view?usp=sharing'
+
 ruta_audio_correcta_drive='https://drive.google.com/file/d/1dZQS5rdjIBmy59rlY34gJFBP7L8gG_4c/view?usp=sharing'
+
 audio_optionDrive='https://drive.google.com/file/d/1IWwxXh3EO7DmKhD-65DX9wZ6tX49biQh/view?usp=sharing'
 
+audio_final_speech_drive='https://drive.google.com/file/d/1zIU2vU7tSiTSVjhnERyHSYELNdjYsC7V/view?usp=sharing'
+
 countdown_audio = Path.cwd() / 'audiosEstaticos' / 'countdown.mp3'
+
 transition_audio = Path.cwd() / 'audiosEstaticos' / 'transition.mp3'
-ruta_audio_correcta =ruta_audios = Path.cwd() / 'audiosEstaticos' / 'correct.mp3'
 
-duracion_video,duraciones_preguntas,duracion_presentacion=duracionVideo.get_duraciones(quiz_data_dict,opcionesCorrectas)
+ruta_audio_correcta = Path.cwd() / 'audiosEstaticos' / 'correct.mp3'
+
+ruta_speech_final = Path.cwd() / 'audiosEstaticos' /'final_speech.mp3'
+
+duracion_video,duraciones_preguntas,duracion_presentacion,duracion_parte_final=duracionVideo.get_duraciones(quiz_data_dict,opcionesCorrectas)
+
+source = Source('mp4', 1080, 1920, duracion_video)
+
+#background_music = Audio("Music", 18, "0 s", None, True, str(BACKGROUND_MUSIC), "6%", "1 s") # Si se quiere poner una fondo En el video
+#source.elements.append(background_music)
+
+video = Video(source)
+
+animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
+
+if len(list(ruta_audios.glob("*"))) == 0: # cuando no haya nada
+    audio.download_questions_audios_local(quiz_data_dict["questions"])
+
+audio.cargarOpcionesCorrectas(quiz_data_dict["questions"],opcionesCorrectas)
+
+
+while True:  #Espera a que se suban todos los archivos de forma local
+    if len(list(ruta_audios.glob("*"))) >= NUMBER_OF_QUESTIONS:
+        break
+    time.sleep(1)
+
+for index_pregunta, question in enumerate(quiz_data_dict["questions"]):#Esto sube los audios desde local a drive
+    urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(index_pregunta)+'.mp3', '/audio'+'/'+str(index_pregunta)+'.mp3')
+    audioDrive.append(urlDrive)
+    urlDriveCorrecta = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(index_pregunta)+"-correct"+'.mp3', '/audio'+'/'+str(index_pregunta)+'.mp3')
+    audioDriveRtaCorrecta.append(urlDriveCorrecta)
+urlDrive = audio.upload_file_to_google_drive(os.getcwd()+'/audio'+'/'+str(NUMBER_OF_QUESTIONS)+'.mp3', '/audio'+'/'+str(NUMBER_OF_QUESTIONS)+'.mp3')#es el texto inicial
+audioDrive.append(urlDrive)
 
 
 
-#------------------------Presentacion
+while True:  #Espera a que se suban todos los archivos al Drive
+    if audio.obtener_cantidad_archivos_en_carpeta(urlDrive) >= NUMBER_OF_QUESTIONS:
+        time.sleep(10)
+        break
+    time.sleep(1)    
+
+
+'''
+#Presentacion
 source = Source('mp4', 1080, 1920, duracion_video)
 #background_music = Audio("Music", 18, "0 s", None, True, str(BACKGROUND_MUSIC), "6%", "1 s")
 #source.elements.append(background_music)
@@ -117,16 +140,12 @@ inicial_text.stroke_color = "#000000"
 composition.elements.append(inicial_text)
 inicial_text_to_speech = Audio("Audio" + str(NUMBER_OF_QUESTIONS), 3, "0 s", audio.obtener_duracion_mp3_en_segundos(os.path.abspath(os.path.join(os.getcwd(), 'audio', str(NUMBER_OF_QUESTIONS)+".mp3"))), True, audioDrive[NUMBER_OF_QUESTIONS], "100%", "0 s")
 composition.elements.append(inicial_text_to_speech)
-animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
 background_video = Image(type="video", source=str(FONDO_INCIO), track=1, time=0, duration=audio.tiempo_a_float(duracion_presentacion), clip=True,volume="0%")
 background_video.animations.append(animation)
-image = Image(str(FONDO_INCIO), 4, audio.tiempo_a_float(duracion_presentacion), True, [])
-image.animations.append(animation)
-composition.elements.append(image)
 composition.elements.append(background_video)
 source.elements.append(composition)
 
-
+'''
 
 #Generacion de las preguntas
 for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
@@ -153,12 +172,9 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     question_to_speech = Audio("Audio" + str(index_pregunta), first_track, "0 s", duracion_audio_pregunta, True, audioDrive[index_pregunta], "100%", "0 s")
     composition.elements.append(question_to_speech)
 
-    #animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
     background_video = Image(type="video", source=background_list_dict[index_pregunta], track=1, time=0, duration=audio.tiempo_a_float(duraciones_preguntas[index_pregunta]), clip=True)
     background_video.animations.append(animation)
-    #image = Image(background_list_dict[index_pregunta], 1, 10, True, [])
-    #image.animations.append(animation)
-    #composition.elements.append(image)
+
     composition.elements.append(background_video)
 
 
@@ -186,11 +202,6 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     composition.elements.append(countdown)
     composition.elements.append(correct)
 
-    #audio.pathOptionAudio(opcionesCorrectas[index_pregunta])
-    #tiempo_option_audio=audio.obtener_duracion_mp3_en_segundos(os.getcwd()+'/audiosEstaticos'+'/'+'option.mp3')
-    #option_audio_to_speech = Audio("Audio" + "option", 390,tiempo_audio_correct,tiempo_option_audio, True, audio_optionDrive, "100%", "0 s")
-    #composition.elements.append(option_audio_to_speech) #Audio que dice option
-    #tiempo_max_option_audio=audio.sumar_tiempos(tiempo_audio_correct,tiempo_option_audio)
     
     duracion_char_audio=audio.obtener_duracion_mp3_en_segundos(audio.pathOptionAudio(opcionesCorrectas[index_pregunta]))
     char_option_audio_to_speech = Audio("Audio" +str(index_pregunta)+"-charcorrect", 395,tiempo_audio_correct, duracion_char_audio, True, audio.obtenerRutaDriveCharOption(opcionesCorrectas[index_pregunta]), "100%", "0 s")
@@ -242,6 +253,23 @@ for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
     source.elements.append(composition)
 
 
+#------------------------Final
+
+composition = Composition("Question" + str(NUMBER_OF_QUESTIONS+1),1,duracion_parte_final)
+final_text = Element("text", track=998, text=str(TEXTO_FINAL), y="50%", fill_color="#ffffff", background_color="rgba(0, 0, 0, 0.5)")
+final_text.animations.append(text_start_anim)
+final_text.animations.append(text_end_anim)
+final_text.stroke_color = "#000000"
+composition.elements.append(final_text)
+final_text_to_speech = Audio("Audio" + str(NUMBER_OF_QUESTIONS+1), 333, "0 s", audio.obtener_duracion_mp3_en_segundos(ruta_speech_final), True, audio_final_speech_drive, "100%", "0 s")
+composition.elements.append(final_text_to_speech)
+animation = Animation(easing='linear', type='scale', scope='element', start_scale='120%', fade=False)
+background_video = Image(type="video", source=str(FONDO_INCIO), track=997, time=0, duration=audio.tiempo_a_float(duracion_parte_final), clip=True,volume="0%")
+background_video.animations.append(animation)
+composition.elements.append(background_video)
+source.elements.append(composition)
+
+
 output = json.loads(video.toJSON())
 
 response = requests.post(
@@ -259,7 +287,3 @@ else:
     print("La solicitud falló con el código de estado:", response.status_code)
     print("Mensaje de error:", response.text)  # Imprimir el mensaje de error si hay uno
 
-
-
-#for index_pregunta, question in enumerate(quiz_data_dict["questions"]):
-#    audio.eliminar_archivo_de_drive(audioDrive[index_pregunta])

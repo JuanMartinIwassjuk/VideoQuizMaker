@@ -13,8 +13,11 @@ from config import NUMBER_OF_QUESTIONS,NUMBER_OF_OPTIONS, LEVEL_OF_DIFFICULTY, T
 countdown_audio = Path.cwd() / 'audiosEstaticos' / 'countdown.mp3'
 transition_audio = Path.cwd() / 'audiosEstaticos' / 'transition.mp3'
 ruta_audio_correcta = Path.cwd() / 'audiosEstaticos' / 'correct.mp3'
-
 duracion_audio_option = audio.obtener_duracion_mp3_en_segundos(Path.cwd() / 'audiosEstaticos' / 'option.mp3')
+
+duracion_speech_final=audio.obtener_duracion_mp3_en_segundos(Path.cwd() / 'audiosEstaticos' /'final_speech.mp3')
+duracion_parte_final=audio.sumar_tiempos(duracion_speech_final,"1 s")
+
 
 
 
@@ -72,8 +75,8 @@ def get_duraciones(quiz_data_dict,opcionesCorrectas):
 
 
     print("La duracion total del video es: ",duracion_video)
-
-    return duracion_video,duraciones_preguntas,duracion_presentacion
+    duracion_video=audio.sumar_tiempos(duracion_video,duracion_parte_final)
+    return duracion_video,duraciones_preguntas,duracion_presentacion,duracion_parte_final
 
 
 
